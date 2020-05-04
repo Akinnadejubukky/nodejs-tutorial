@@ -1,20 +1,33 @@
-const http = require("http");
-const fs = require("fs");
+'use strict'
+
+
 const path = require("path");
+const express = require("express");
 
 
+// const add = require('./add');
 
-// const cors = require("cors")
-// const express = require("express");
+const app = express();
 
 
+app.use('/assets', express.static(path.join(__dirname, './assets')));
 
-const server = http.createServer((req, res) => {
-    res.write("Hello Bukola");
-    res.end()
+app.set('view engine', 'ejs');
+
+
+app.get('/', (req, res) => {
+    res.render('index', {
+        title: 'My Todo App'
+    });   
+
+})
+
+
+app.get('/login', (req, res) => {
+    res.send('Welcome to my login page')
 });
 
 
-server.listen(5000,(err)=>{
+app.listen(5000, ()=>{
     console.log("Listening on port 5000")
-});
+});  
