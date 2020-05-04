@@ -2,17 +2,31 @@
   "name": "nodejs-tutorial",
   "version": "1.0.0",
   "description": "",
-  "main": "assignment.js",
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "cross-env": "^7.0.2"
+    "cross-env": "^7.0.2",
+    "nodemon": "^2.0.3"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      ".git",
+      "node_modules"
+    ],
+    "watch": [
+      "**/*.js"
+    ],
+    "exec": "node index.js",
+    "ext": "js"
   },
   "dependencies": {
     "cors": "^2.8.5",
+    "ejs": "^3.1.2",
     "express": "^4.17.1"
   }
 }
