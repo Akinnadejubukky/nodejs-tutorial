@@ -10,10 +10,35 @@ const CHECK = "fa-check-circle";
 const UNCHECK = "fa-circle-thin";
 const LINE_THROUGH = "lineThrough";
 
+console.log(axios);
+
+
+const http = axios.create({
+   baseURL: BASE_URL
+});
+
+async function fetchTodo(){
+  try {
+    const response = await http.get('/todo/all');
+    return response.data.map((todo, index) => {
+      return {
+        id: index,
+        docId: todo._id,
+        name: todo.name,
+        done: false,
+        trash: false
+      }
+    });
+  } catch (error) {
+      console.log(error);
+      return [];
+  }
+}
+
 
 // declaring variables to add items to the list
 
-let LIST, id;
+let LIST, id = 0;
 
 
 // ** getting items from localStorage **// 
@@ -21,16 +46,24 @@ let LIST, id;
 let data = localStorage.getItem("TODO");
 
 // to check if data is not empty 
-if(data){
-  LIST = JSON.parse(data);
+// if(data){
+//   LIST = JSON.parse(data);
 
-  id = list.length; //this sets the id to the last one in the list 
-  loadList(LIST) //load the list stored in local storage to the user interface.
-} else {
-  // if data is empty
-  LIST = [];
-  id = 0;
-}
+//   id = list.length; //this sets the id to the last one in the list 
+//   loadList(LIST) //load the list stored in local storage to the user interface.
+// } else {
+//   // if data is empty
+//   LIST = [];
+//   id = 0;
+// }
+
+
+fetchTodo().then((items) => {
+  if(items.length) {
+    loadList(items);
+  }
+  LIST = items;
+})
 
 // function designed to load items from local storage to the user interface
 
@@ -38,8 +71,8 @@ if(data){
 function loadList(array){
   array.forEach(function(item){
     addToDo(item.name,item.id,item.done,item.trash);
+    id++;
   });
-  
 }
 
 /**clearing items from the local storage */
@@ -93,20 +126,31 @@ document.addEventListener("keyup", event => {
     // if a todo is added the addtodo function is triggered it will add the todo to the list
     if (toDo) {
       // if the input isnt empty
-      addToDo(toDo, id, false, false);
-      LIST.push({
-        name: toDo,
-        id: id,
-        done: false,
-        trash: false
-      });
+      http.post('/todo/create', {
+        name: toDo
+      }).then((response) => {
+        if(response.status === 200) {
+          addToDo(toDo, id, false, false);
+            LIST.push({
+              name: toDo,
+              id: id,
+              docId: response.data._id,
+              done: false,
+              trash: false,
+            });
+            id++;
+        }
+
+        
+        // else handle errors here
+      }).catch((error) => {
+        // handle request sending error;
+      })
       // add item to LocalStorage(this code must be added where the list array is updated)
 
-      localStorage.setItem("TODO", JSON.stringify(LIST));
-
-      id++;
+      // localStorage.setItem("TODO", JSON.stringify(LIST));
     }
-    console.log(LIST);
+   
     // when empty
     input.value = "";
   }
@@ -123,12 +167,19 @@ function completeToDo(element) {
 }
 
 // to remove a to do
-
+ 
 function removeToDo(element) {
-  element.parentNode.parentNode.removeChild(element.parentNode);
-
-  LIST[element.id].trash = true;
-}
+    //display something to the user that a background operation is ongoing
+    console.log(LIST, element);
+    const todo = LIST[element.id];
+    todo.trash = true;
+    console.log('sending request to delete');
+    http.delete(`/todo/delete/${todo.docId}`).then((response) => {
+      element.parentNode.parentNode.removeChild(element.parentNode);
+      //show a notification that todo has been deleted
+      console.log(response);
+    });
+  };
 
 // an event listener designed to target items created dynamically
 
@@ -146,3 +197,5 @@ list.addEventListener("click", event => {
 
   localStorage.setItem("TODO", JSON.stringify(LIST));
 });
+
+
