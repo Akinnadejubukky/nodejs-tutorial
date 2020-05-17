@@ -1,0 +1,12 @@
+{
+    "cSpell.words": [
+        "bodyparser",
+        "mongodb",
+        "response",
+        "todos"
+    ],
+    "liveServer.settings.port": 5501,
+    "cSpell.ignoreWords": [
+        "response"
+    ]
+}
