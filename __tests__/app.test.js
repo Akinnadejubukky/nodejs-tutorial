@@ -10,7 +10,7 @@ describe('Todo CRUD API', () => {
     test('Read Todos', async (done) => {
         const response = await request(app).get('/todo/all');
         expect(response.status).toBe(200);
-        expect(typeof response.body).toBe('object');
+        expect(typeof response.body[0]).toBe('object');
         expect(Array.isArray(response.body)).toBe(true);
         expect(typeof response.body[0]).toBe('object');
         return done();
@@ -29,7 +29,7 @@ describe('Todo CRUD API', () => {
     test('Get Non Existing Todo', async() => {
         let id = '5ebc40565aab8f13d89c8bdb';
         const response = await request(app).get(`/todo/one?id=${id}`);
-        expect(response.status).toBe(200);
+        expect(response.status).toBe(404);
     });
 
     test('Post Todo', async() => {
