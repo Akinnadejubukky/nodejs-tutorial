@@ -126,6 +126,7 @@ document.addEventListener("keyup", event => {
     // if a todo is added the addtodo function is triggered it will add the todo to the list
     if (toDo) {
       // if the input isnt empty
+      console.log(toDo)
       http.post('/todo/create', {
         name: toDo
       }).then((response) => {
