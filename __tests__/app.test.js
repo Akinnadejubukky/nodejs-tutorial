@@ -16,7 +16,7 @@ describe('Todo CRUD API', () => {
         return done();
     });
     test('Get One Todo', async () => {
-        const todo = await Task.findOne();
+        const todo = await Task.findOne(); 
         if(!todo) {
             return;
         }
